@@ -1,0 +1,42 @@
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    hibernate:
+    #  ddl-auto: update
+     ddl-auto: create
+    # ddl-auto: update
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
+
+  flyway:
+    enabled: true
+    validate-on-migrate: true
+    locations: classpath:migration
+
+  datasource:
+    password: ${DB_PWD:docker}
+    username: ${DB_USER:postgres}
+    url: jdbc:${DSN:postgresql://localhost:5432/pfe}
+    initialization-mode: always
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+server:
+  compression:
+    enabled: true
+    min-response-size: 4096
+    mime-types: text/xml, text/css, text/html, application/json
+  connection-timeout: 10000000
+  http2:
+    enabled: true
+  port: 8080
+logging:
+  level:
+    org.springframework.web: debug
+    org.springframework.security: error
+    com.tes.regulationdocs: debug
