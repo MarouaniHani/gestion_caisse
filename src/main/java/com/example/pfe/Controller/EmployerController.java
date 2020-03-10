@@ -42,12 +42,12 @@ public class EmployerController {
                 return new ResponseEntity<>("Please enter a valid position !", HttpStatus.BAD_REQUEST);
         }
         // persister les données de l'employé
-        employer.setNom(employerDto.getNom());
-        employer.setPrenom(employerDto.getPrenom());
-        employer.setMotDePass(employerDto.getMotDePass());
+        employer.setFirstName(employerDto.getFirstName());
+        employer.setLastName(employerDto.getLastName());
+        employer.setPassword(employerDto.getPassword());
         employer.setPostion(position);
         employer.setService(employerDto.getService());
-        employer.setPlafondAssurance(2000);
+        employer.setCeilingAssurance(2000);
         // enregistrer les données dans la base de données
         employerRepository.save(employer);
         return new ResponseEntity<>(employer, HttpStatus.OK);
@@ -60,10 +60,10 @@ public class EmployerController {
         return new ResponseEntity<>(employers, HttpStatus.OK);
     }
 
-    @GetMapping("/matricule/{id}")
+    @GetMapping("/registration-number/{id}")
     public ResponseEntity<?> getEmployerByMatricule(@PathVariable() String id) {
         // rechercher l'employé par le matricule
-        Optional<Employer> employer = employerRepository.findByMatricule(Integer.parseInt(id));
+        Optional<Employer> employer = employerRepository.findByRegistrationNumber(Integer.parseInt(id));
         // si l'employé exist
         if (employer.isPresent()) {
             return new ResponseEntity<>(employer, HttpStatus.OK);
@@ -75,7 +75,7 @@ public class EmployerController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteEmployer(@PathVariable() String id) {
         // rechercher l'employé par le matricule
-        Optional<Employer> employer = employerRepository.findByMatricule(Integer.parseInt(id));
+        Optional<Employer> employer = employerRepository.findByRegistrationNumber(Integer.parseInt(id));
         // si l'employé exist
         if (employer.isPresent()) {
             // supprimer l'employé
@@ -90,7 +90,7 @@ public class EmployerController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateEmployer(@RequestBody EmployerDto employerDto, @PathVariable() String id) {
         // rechercher l'employé par le matricule
-        Optional<Employer> employer = employerRepository.findByMatricule(Integer.parseInt(id));
+        Optional<Employer> employer = employerRepository.findByRegistrationNumber(Integer.parseInt(id));
         // si l'employé exist
         if (employer.isPresent()) {
             Employer.Postion position;
@@ -109,11 +109,11 @@ public class EmployerController {
                     return new ResponseEntity<>("Please enter a valid position !", HttpStatus.BAD_REQUEST);
             }
             //persister les données
-            employer.get().setNom(employerDto.getNom());
-            employer.get().setPrenom(employerDto.getPrenom());
+            employer.get().setFirstName(employerDto.getFirstName());
+            employer.get().setLastName(employerDto.getLastName());
             employer.get().setService(employerDto.getService());
             employer.get().setPostion(position);
-            employer.get().setMotDePass(employerDto.getMotDePass());
+            employer.get().setPassword(employerDto.getPassword());
             // mise a jour de l'employé dans la base de donnés
             employerRepository.save(employer.get());
             return new ResponseEntity<>(employer.get(), HttpStatus.OK);
@@ -123,11 +123,11 @@ public class EmployerController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto){
-        Optional<Employer> employer = employerRepository.findByMatriculeAndMotDePass(loginDto.getMatricule(),loginDto.getMotDePass());
-        if (employer.isPresent()){
-            return new ResponseEntity<>(employer.get().getPostion(),HttpStatus.OK);
+    public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto) {
+        Optional<Employer> employer = employerRepository.findByRegistrationNumberAndPassword(loginDto.getRegistrationNumber(), loginDto.getPassword());
+        if (employer.isPresent()) {
+            return new ResponseEntity<>(employer.get().getPostion(), HttpStatus.OK);
         }
-        return new ResponseEntity<>("Employer not found ! verify mdp et matricule",HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Employer not found ! verify password and registration number", HttpStatus.NOT_FOUND);
     }
 }

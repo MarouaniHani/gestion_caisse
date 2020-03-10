@@ -7,6 +7,6 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 public interface EmployerRepository extends JpaRepository<Employer, Integer> {
-    Optional<Employer> findByMatricule(int matricule);
-    Optional<Employer> findByMatriculeAndMotDePass(int matricule,String mdp);
+    Optional<Employer> findByRegistrationNumber(int regNum);
+    Optional<Employer> findByRegistrationNumberAndPassword(int regNum,String mdp);
 }

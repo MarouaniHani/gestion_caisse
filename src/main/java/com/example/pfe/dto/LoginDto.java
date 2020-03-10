@@ -4,23 +4,23 @@ import javax.validation.constraints.NotNull;
 
 public class LoginDto {
     @NotNull
-    private int matricule;
+    private int registrationNumber;
     @NotNull
-    private String motDePass;
+    private String password;
 
-    public int getMatricule() {
-        return matricule;
+    public int getRegistrationNumber() {
+        return registrationNumber;
     }
 
-    public void setMatricule(int matricule) {
-        this.matricule = matricule;
+    public void setRegistrationNumber(int registrationNumber) {
+        this.registrationNumber = registrationNumber;
     }
 
-    public String getMotDePass() {
-        return motDePass;
+    public String getPassword() {
+        return password;
     }
 
-    public void setMotDePass(String motDePass) {
-        this.motDePass = motDePass;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

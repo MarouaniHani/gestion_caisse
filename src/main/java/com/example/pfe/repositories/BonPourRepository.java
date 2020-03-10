@@ -8,5 +8,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface BonPourRepository extends JpaRepository<BonPour, Integer> {
-    List<BonPour> findAllByEmployerMatricule(String id);
+    List<BonPour> findAllByEmployerRegistrationNumber(String id);
 }

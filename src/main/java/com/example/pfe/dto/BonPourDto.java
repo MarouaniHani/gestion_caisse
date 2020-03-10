@@ -1,31 +1,31 @@
 package com.example.pfe.dto;
 
 public class BonPourDto {
-    private String employerMatricule;
-    private String libelle;
-    private double montant;
+    private String employerRegistrationNumber;
+    private String wording;
+    private double amount;
 
-    public String getEmployerMatricule() {
-        return employerMatricule;
+    public String getEmployerRegistrationNumber() {
+        return employerRegistrationNumber;
     }
 
-    public void setEmployerMatricule(String employerMatricule) {
-        this.employerMatricule = employerMatricule;
+    public void setEmployerRegistrationNumber(String employerRegistrationNumber) {
+        this.employerRegistrationNumber = employerRegistrationNumber;
     }
 
-    public String getLibelle() {
-        return libelle;
+    public String getWording() {
+        return wording;
     }
 
-    public void setLibelle(String libelle) {
-        this.libelle = libelle;
+    public void setWording(String wording) {
+        this.wording = wording;
     }
 
-    public double getMontant() {
-        return montant;
+    public double getAmount() {
+        return amount;
     }
 
-    public void setMontant(double montant) {
-        this.montant = montant;
+    public void setAmount(double amount) {
+        this.amount = amount;
     }
 }

@@ -10,11 +10,11 @@ public class Assurance {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    private String numBultinDeSoin;
+    private String numCareBulletin;
     private String date;
-    private double montant;
-    private String employerMatricule;
-    private Etat etat;
+    private double amount;
+    private String employerRegistrationNumber;
+    private Etat status;
 
     public Assurance() {
     }
@@ -27,12 +27,12 @@ public class Assurance {
         this.id = id;
     }
 
-    public String getNumBultinDeSoin() {
-        return numBultinDeSoin;
+    public String getNumCareBulletin() {
+        return numCareBulletin;
     }
 
-    public void setNumBultinDeSoin(String numBultinDeSoin) {
-        this.numBultinDeSoin = numBultinDeSoin;
+    public void setNumCareBulletin(String numBultinDeSoin) {
+        this.numCareBulletin = numBultinDeSoin;
     }
 
     public String getDate() {
@@ -43,28 +43,28 @@ public class Assurance {
         this.date = date;
     }
 
-    public double getMontant() {
-        return montant;
+    public double getAmount() {
+        return amount;
     }
 
-    public void setMontant(double montant) {
-        this.montant = montant;
+    public void setAmount(double montant) {
+        this.amount = montant;
     }
 
-    public String getEmployerMatricule() {
-        return employerMatricule;
+    public String getEmployerRegistrationNumber() {
+        return employerRegistrationNumber;
     }
 
-    public void setEmployerMatricule(String employerMatricule) {
-        this.employerMatricule = employerMatricule;
+    public void setEmployerRegistrationNumber(String employerMatricule) {
+        this.employerRegistrationNumber = employerMatricule;
     }
 
-    public Etat getEtat() {
-        return etat;
+    public Etat getStatus() {
+        return status;
     }
 
-    public void setEtat(Etat etat) {
-        this.etat = etat;
+    public void setStatus(Etat etat) {
+        this.status = etat;
     }
 
     public enum Etat{

@@ -6,40 +6,40 @@ import javax.validation.constraints.NotNull;
 public class EmployerDto {
     @NotNull
     @NotBlank
-    private String nom;
+    private String firstName;
     @NotNull
     @NotBlank
-    private String prenom;
+    private String lastName;
     private String position;
     @NotNull
     @NotBlank
-    private String motDePass;
+    private String password;
     @NotNull
     @NotBlank
     private String service;
 
-    public EmployerDto(String nom, String prenom, String position, String motDePass, String service) {
-        this.nom = nom;
-        this.prenom = prenom;
+    public EmployerDto(String firstName, String lastName, String position, String password, String service) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.position = position;
-        this.motDePass = motDePass;
+        this.password = password;
         this.service = service;
     }
 
-    public String getNom() {
-        return nom;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setNom(String nom) {
-        this.nom = nom;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getPrenom() {
-        return prenom;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getPosition() {
@@ -50,12 +50,12 @@ public class EmployerDto {
         this.position = position;
     }
 
-    public String getMotDePass() {
-        return motDePass;
+    public String getPassword() {
+        return password;
     }
 
-    public void setMotDePass(String motDePass) {
-        this.motDePass = motDePass;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getService() {

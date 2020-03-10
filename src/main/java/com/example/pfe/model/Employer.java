@@ -9,41 +9,41 @@ import javax.persistence.Id;
 public class Employer {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int matricule;
-    private String nom;
-    private String prenom;
+    private int registrationNumber;
+    private String firstName;
+    private String lastName;
     private Postion postion;
-    private String motDePass;
+    private String password;
     private String service;
-    private double plafondAssurance;
+    //plafond
+    private double ceilingAssurance;
 
 
     public Employer() {
     }
 
-
-    public int getMatricule() {
-        return matricule;
+    public int getRegistrationNumber() {
+        return registrationNumber;
     }
 
-    public void setMatricule(int matricule) {
-        this.matricule = matricule;
+    public void setRegistrationNumber(int registrationNumber) {
+        this.registrationNumber = registrationNumber;
     }
 
-    public String getNom() {
-        return nom;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setNom(String nom) {
-        this.nom = nom;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getPrenom() {
-        return prenom;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public Postion getPostion() {
@@ -54,12 +54,12 @@ public class Employer {
         this.postion = postion;
     }
 
-    public String getMotDePass() {
-        return motDePass;
+    public String getPassword() {
+        return password;
     }
 
-    public void setMotDePass(String motDePass) {
-        this.motDePass = motDePass;
+    public void setPassword(String motDePass) {
+        this.password = motDePass;
     }
 
     public String getService() {
@@ -70,12 +70,12 @@ public class Employer {
         this.service = service;
     }
 
-    public double getPlafondAssurance() {
-        return plafondAssurance;
+    public double getCeilingAssurance() {
+        return ceilingAssurance;
     }
 
-    public void setPlafondAssurance(double plafondAssurance) {
-        this.plafondAssurance = plafondAssurance;
+    public void setCeilingAssurance(double ceilingAssurance) {
+        this.ceilingAssurance = ceilingAssurance;
     }
 
     public enum Postion{

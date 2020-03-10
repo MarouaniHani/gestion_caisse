@@ -3,11 +3,11 @@ package com.example.pfe.Controller;
 
 import com.example.pfe.dto.BonPourDto;
 import com.example.pfe.model.BonPour;
-import com.example.pfe.model.Caisse;
 import com.example.pfe.model.Employer;
+import com.example.pfe.model.Fund;
 import com.example.pfe.repositories.BonPourRepository;
-import com.example.pfe.repositories.CaisseRepository;
 import com.example.pfe.repositories.EmployerRepository;
+import com.example.pfe.repositories.FundRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,38 +23,38 @@ public class BonPourController {
 
     private final BonPourRepository bonPourRepository;
     private final EmployerRepository employerRepository;
-    private final CaisseRepository caisseRepository;
+    private final FundRepository fundRepository;
 
-    public BonPourController(BonPourRepository bonPourRepository, EmployerRepository employerRepository, CaisseRepository caisseRepository) {
+    public BonPourController(BonPourRepository bonPourRepository, EmployerRepository employerRepository, FundRepository fundRepository) {
         this.bonPourRepository = bonPourRepository;
         this.employerRepository = employerRepository;
-        this.caisseRepository = caisseRepository;
+        this.fundRepository = fundRepository;
     }
 
     @PostMapping
     public ResponseEntity<?> addBonPour(@Valid @RequestBody BonPourDto bonPourDto) {
-        if (bonPourDto.getEmployerMatricule().equals("")) {
-            return new ResponseEntity<>("You need to enter employer matricule !", HttpStatus.BAD_REQUEST);
+        if (bonPourDto.getEmployerRegistrationNumber().equals("")) {
+            return new ResponseEntity<>("You need to enter employer registration number !", HttpStatus.BAD_REQUEST);
         }
-        if (bonPourDto.getLibelle().equals("")) {
-            return new ResponseEntity<>("You need to enter libelle !", HttpStatus.BAD_REQUEST);
+        if (bonPourDto.getWording().equals("")) {
+            return new ResponseEntity<>("You need to enter wording !", HttpStatus.BAD_REQUEST);
         }
-        if (bonPourDto.getMontant() == 0) {
+        if (bonPourDto.getAmount() == 0) {
             return new ResponseEntity<>("You need to enter price !", HttpStatus.BAD_REQUEST);
         }
-        Optional<Employer> employer = employerRepository.findByMatricule(Integer.parseInt(bonPourDto.getEmployerMatricule()));
+        Optional<Employer> employer = employerRepository.findByRegistrationNumber(Integer.parseInt(bonPourDto.getEmployerRegistrationNumber()));
         if (employer.isPresent()) {
             LocalDate date = LocalDate.now();
             BonPour bonPour = new BonPour();
-            bonPour.setEmployerMatricule(bonPourDto.getEmployerMatricule());
+            bonPour.setEmployerRegistrationNumber(bonPourDto.getEmployerRegistrationNumber());
             bonPour.setDate(date.toString());
-            bonPour.setLibelle(bonPourDto.getLibelle());
-            bonPour.setMontant(bonPourDto.getMontant());
+            bonPour.setWording(bonPourDto.getWording());
+            bonPour.setAmount(bonPourDto.getAmount());
             bonPour.setEnInstance(true);
             bonPourRepository.save(bonPour);
             return new ResponseEntity<>(bonPour, HttpStatus.OK);
         }
-        return new ResponseEntity<>("Employer not found ! check matricule ", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Employer not found ! check registration number ", HttpStatus.NOT_FOUND);
 
     }
 
@@ -64,14 +64,14 @@ public class BonPourController {
         return new ResponseEntity<>(bonPourList, HttpStatus.OK);
     }
 
-    @GetMapping("/matricule/{id}")
-    public ResponseEntity<?> getListBonPourByMatriclue(@PathVariable() String id) {
-        Optional<Employer> employer = employerRepository.findByMatricule(Integer.parseInt(id));
+    @GetMapping("/registration-number/{id}")
+    public ResponseEntity<?> getListBonPourByRegistrationNumber(@PathVariable() String id) {
+        Optional<Employer> employer = employerRepository.findByRegistrationNumber(Integer.parseInt(id));
         if (employer.isPresent()) {
-            List<BonPour> bonPourList = bonPourRepository.findAllByEmployerMatricule(id);
+            List<BonPour> bonPourList = bonPourRepository.findAllByEmployerRegistrationNumber(id);
             return new ResponseEntity<>(bonPourList, HttpStatus.OK);
         }
-        return new ResponseEntity<>("Employer not found ! check matricule ", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Employer not found ! check registration number ", HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/{id}")
@@ -97,24 +97,24 @@ public class BonPourController {
     public ResponseEntity<?> validateBonPour(@PathVariable() int id) {
         Optional<BonPour> bonPour = bonPourRepository.findById(id);
         if (bonPour.isPresent()) {
-            if (!bonPour.get().isEnInstance()){
-                return new ResponseEntity<>("BonPour is already payed !",HttpStatus.OK);
+            if (!bonPour.get().isEnInstance()) {
+                return new ResponseEntity<>("BonPour is already payed !", HttpStatus.OK);
             }
-            Optional<Caisse> caisse = caisseRepository.findFirstByOrderById();
-            if (caisse.isEmpty()){
-                return new ResponseEntity<>("Caisse not found !",HttpStatus.NOT_FOUND);
+            Optional<Fund> fund = fundRepository.findFirstByOrderById();
+            if (fund.isEmpty()) {
+                return new ResponseEntity<>("Caisse not found !", HttpStatus.NOT_FOUND);
             }
             // todo : verify sold of caisse cases
-            if (caisse.get().getSolde()<bonPour.get().getMontant()){
-                caisse.get().setSolde(1500);
+            if (fund.get().getSold() < bonPour.get().getAmount()) {
+                fund.get().setSold(1500);
             }
-            if (caisse.get().getSolde()<bonPour.get().getMontant()){
-                return new ResponseEntity<>("Insufficient fund amount",HttpStatus.BAD_REQUEST);
+            if (fund.get().getSold() < bonPour.get().getAmount()) {
+                return new ResponseEntity<>("Insufficient fund amount", HttpStatus.BAD_REQUEST);
             }
-            caisse.get().setSolde(caisse.get().getSolde()-bonPour.get().getMontant());
+            fund.get().setSold(fund.get().getSold() - bonPour.get().getAmount());
             bonPour.get().setEnInstance(false);
             bonPourRepository.save(bonPour.get());
-            caisseRepository.save(caisse.get());
+            fundRepository.save(fund.get());
             return new ResponseEntity<>("BonPour validated successfully !", HttpStatus.OK);
         }
         return new ResponseEntity<>("BonPour not found !", HttpStatus.NOT_FOUND);
@@ -124,20 +124,20 @@ public class BonPourController {
     public ResponseEntity<?> updateBonPour(@PathVariable() int id, @Valid @RequestBody BonPourDto bonPourDto) {
         Optional<BonPour> bonPour = bonPourRepository.findById(id);
         if (bonPour.isPresent()) {
-            if (!bonPourDto.getEmployerMatricule().equals("")) {
-                Optional<Employer> employer = employerRepository.findByMatricule(Integer.parseInt(bonPourDto.getEmployerMatricule()));
+            if (!bonPourDto.getEmployerRegistrationNumber().equals("")) {
+                Optional<Employer> employer = employerRepository.findByRegistrationNumber(Integer.parseInt(bonPourDto.getEmployerRegistrationNumber()));
                 if (employer.isPresent()) {
-                    bonPour.get().setEmployerMatricule(bonPourDto.getEmployerMatricule());
-                    if (!bonPourDto.getLibelle().equals("")) {
-                        bonPour.get().setLibelle(bonPourDto.getLibelle());
+                    bonPour.get().setEmployerRegistrationNumber(bonPourDto.getEmployerRegistrationNumber());
+                    if (!bonPourDto.getWording().equals("")) {
+                        bonPour.get().setWording(bonPourDto.getWording());
                     }
-                    if (bonPourDto.getMontant() != 0) {
-                        bonPour.get().setMontant(bonPourDto.getMontant());
+                    if (bonPourDto.getAmount() != 0) {
+                        bonPour.get().setAmount(bonPourDto.getAmount());
                     }
                     bonPourRepository.save(bonPour.get());
                     return new ResponseEntity<>("BonPour updated successfully !", HttpStatus.OK);
                 }
-                return new ResponseEntity<>("Employer not found ! verify matriclue", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Employer not found ! verify registration number", HttpStatus.BAD_REQUEST);
             }
         }
         return new ResponseEntity<>("BonPour not found !", HttpStatus.NOT_FOUND);

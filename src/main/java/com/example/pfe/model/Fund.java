@@ -6,11 +6,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Caisse {
+public class Fund {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    private double solde;
+    private double sold;
 
     public int getId() {
         return id;
@@ -20,11 +20,11 @@ public class Caisse {
         this.id = id;
     }
 
-    public double getSolde() {
-        return solde;
+    public double getSold() {
+        return sold;
     }
 
-    public void setSolde(double solde) {
-        this.solde = solde;
+    public void setSold(double solde) {
+        this.sold = solde;
     }
 }

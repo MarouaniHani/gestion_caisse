@@ -5,38 +5,38 @@ import javax.validation.constraints.NotNull;
 public class AssuranceDto {
 
     @NotNull
-    private String numBultinDeSoin;
-    private double montant;
-    private String employerMatricule;
+    private String numCareBulletin;
+    private double amount;
+    private String employerRegistrationNumber;
 
-    public AssuranceDto(String numBultinDeSoin, double montant, String employerMatricule) {
-        this.numBultinDeSoin = numBultinDeSoin;
-        this.montant = montant;
-        this.employerMatricule = employerMatricule;
+    public AssuranceDto(String numCareBulletin, double amount, String employerRegistrationNumber) {
+        this.numCareBulletin = numCareBulletin;
+        this.amount = amount;
+        this.employerRegistrationNumber = employerRegistrationNumber;
     }
 
-    public String getNumBultinDeSoin() {
-        return numBultinDeSoin;
+    public String getNumCareBulletin() {
+        return numCareBulletin;
     }
 
-    public void setNumBultinDeSoin(String numBultinDeSoin) {
-        this.numBultinDeSoin = numBultinDeSoin;
+    public void setNumCareBulletin(String numCareBulletin) {
+        this.numCareBulletin = numCareBulletin;
     }
 
-        public double getMontant() {
-        return montant;
+        public double getAmount() {
+        return amount;
     }
 
-    public void setMontant(double montant) {
-        this.montant = montant;
+    public void setAmount(double amount) {
+        this.amount = amount;
     }
 
-    public String getEmployerMatricule() {
-        return employerMatricule;
+    public String getEmployerRegistrationNumber() {
+        return employerRegistrationNumber;
     }
 
-    public void setEmployerMatricule(String employerMatricule) {
-        this.employerMatricule = employerMatricule;
+    public void setEmployerRegistrationNumber(String employerRegistrationNumber) {
+        this.employerRegistrationNumber = employerRegistrationNumber;
     }
 
 }

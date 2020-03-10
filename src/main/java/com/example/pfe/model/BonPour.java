@@ -12,9 +12,12 @@ public class BonPour {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    private String employerMatricule;
-    private String libelle;
-    private double montant;
+    // numéro de dultin de soin 
+    private String employerRegistrationNumber;
+    //libellé
+    private String wording;
+    //montant
+    private double amount;
     private boolean enInstance;
     private String date;
 
@@ -26,28 +29,28 @@ public class BonPour {
         this.id = id;
     }
 
-    public String getEmployerMatricule() {
-        return employerMatricule;
+    public String getEmployerRegistrationNumber() {
+        return employerRegistrationNumber;
     }
 
-    public void setEmployerMatricule(String employerMatricule) {
-        this.employerMatricule = employerMatricule;
+    public void setEmployerRegistrationNumber(String employerMatricule) {
+        this.employerRegistrationNumber = employerMatricule;
     }
 
-    public String getLibelle() {
-        return libelle;
+    public String getWording() {
+        return wording;
     }
 
-    public void setLibelle(String libelle) {
-        this.libelle = libelle;
+    public void setWording(String libelle) {
+        this.wording = libelle;
     }
 
-    public double getMontant() {
-        return montant;
+    public double getAmount() {
+        return amount;
     }
 
-    public void setMontant(double montant) {
-        this.montant = montant;
+    public void setAmount(double montant) {
+        this.amount = montant;
     }
 
     public boolean isEnInstance() {
