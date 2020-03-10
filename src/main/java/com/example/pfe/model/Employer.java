@@ -15,6 +15,7 @@ public class Employer {
     private Postion postion;
     private String motDePass;
     private String service;
+    private double plafondAssurance;
 
 
     public Employer() {
@@ -67,6 +68,14 @@ public class Employer {
 
     public void setService(String service) {
         this.service = service;
+    }
+
+    public double getPlafondAssurance() {
+        return plafondAssurance;
+    }
+
+    public void setPlafondAssurance(double plafondAssurance) {
+        this.plafondAssurance = plafondAssurance;
     }
 
     public enum Postion{

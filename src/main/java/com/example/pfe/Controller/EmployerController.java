@@ -47,6 +47,7 @@ public class EmployerController {
         employer.setMotDePass(employerDto.getMotDePass());
         employer.setPostion(position);
         employer.setService(employerDto.getService());
+        employer.setPlafondAssurance(2000);
         // enregistrer les données dans la base de données
         employerRepository.save(employer);
         return new ResponseEntity<>(employer, HttpStatus.OK);

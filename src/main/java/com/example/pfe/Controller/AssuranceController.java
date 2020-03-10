@@ -2,8 +2,10 @@ package com.example.pfe.Controller;
 
 import com.example.pfe.dto.AssuranceDto;
 import com.example.pfe.model.Assurance;
+import com.example.pfe.model.Caisse;
 import com.example.pfe.model.Employer;
 import com.example.pfe.repositories.AssuranceRepository;
+import com.example.pfe.repositories.CaisseRepository;
 import com.example.pfe.repositories.EmployerRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +22,12 @@ public class AssuranceController {
 
     private final AssuranceRepository assuranceRepository;
     private final EmployerRepository employerRepository;
+    private final CaisseRepository caisseRepository;
 
-    public AssuranceController(AssuranceRepository assuranceRepository, EmployerRepository employerRepository) {
+    public AssuranceController(AssuranceRepository assuranceRepository, EmployerRepository employerRepository, CaisseRepository caisseRepository) {
         this.assuranceRepository = assuranceRepository;
         this.employerRepository = employerRepository;
+        this.caisseRepository = caisseRepository;
     }
 
     @PostMapping
@@ -162,10 +166,37 @@ public class AssuranceController {
             if (assurance.get().getEtat() == Assurance.Etat.PAYED) {
                 return new ResponseEntity<>("Assurance already payed !", HttpStatus.OK);
             }
-            assurance.get().setEtat(Assurance.Etat.PAYED);
-            // todo : decrementer la caisse
-            assuranceRepository.save(assurance.get());
-            return new ResponseEntity<>("Assurance payed !", HttpStatus.OK);
+            Optional<Employer> employer = employerRepository.findByMatricule(Integer.parseInt(assurance.get().getEmployerMatricule()));
+            if (employer.isPresent()) {
+                Optional<Caisse> caisse = caisseRepository.findFirstByOrderById();
+                if (caisse.isEmpty()) {
+                    return new ResponseEntity<>("No caisse found !", HttpStatus.NOT_FOUND);
+                }
+                // if plafond assurance = 0
+                if (employer.get().getPlafondAssurance() == 0) {
+                    return new ResponseEntity<>("Employer reach the ceiling !", HttpStatus.BAD_REQUEST);
+                }
+                // verify sold caisse
+                if (caisse.get().getSolde() < assurance.get().getMontant()) {
+                    caisse.get().setSolde(1500);
+                }
+                // case : montant assurance superieur plafond
+                if (employer.get().getPlafondAssurance() < assurance.get().getMontant()) {
+                    caisse.get().setSolde(caisse.get().getSolde() - employer.get().getPlafondAssurance());
+                    employer.get().setPlafondAssurance(0);
+                }
+                // case : plafond superieur montant
+                if (assurance.get().getMontant() < employer.get().getPlafondAssurance()) {
+                    caisse.get().setSolde(caisse.get().getSolde() - assurance.get().getMontant());
+                    employer.get().setPlafondAssurance(employer.get().getPlafondAssurance() - assurance.get().getMontant());
+                }
+
+                assurance.get().setEtat(Assurance.Etat.PAYED);
+                employerRepository.save(employer.get());
+                assuranceRepository.save(assurance.get());
+                return new ResponseEntity<>("Assurance payed !", HttpStatus.OK);
+            }
+            return new ResponseEntity<>("Employer not found !", HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>("Assurance not found !", HttpStatus.NOT_FOUND);
     }
