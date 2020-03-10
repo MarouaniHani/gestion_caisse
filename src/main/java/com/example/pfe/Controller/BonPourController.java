@@ -3,8 +3,10 @@ package com.example.pfe.Controller;
 
 import com.example.pfe.dto.BonPourDto;
 import com.example.pfe.model.BonPour;
+import com.example.pfe.model.Caisse;
 import com.example.pfe.model.Employer;
 import com.example.pfe.repositories.BonPourRepository;
+import com.example.pfe.repositories.CaisseRepository;
 import com.example.pfe.repositories.EmployerRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +23,12 @@ public class BonPourController {
 
     private final BonPourRepository bonPourRepository;
     private final EmployerRepository employerRepository;
+    private final CaisseRepository caisseRepository;
 
-    public BonPourController(BonPourRepository bonPourRepository, EmployerRepository employerRepository) {
+    public BonPourController(BonPourRepository bonPourRepository, EmployerRepository employerRepository, CaisseRepository caisseRepository) {
         this.bonPourRepository = bonPourRepository;
         this.employerRepository = employerRepository;
+        this.caisseRepository = caisseRepository;
     }
 
     @PostMapping
@@ -93,8 +97,24 @@ public class BonPourController {
     public ResponseEntity<?> validateBonPour(@PathVariable() int id) {
         Optional<BonPour> bonPour = bonPourRepository.findById(id);
         if (bonPour.isPresent()) {
-            // todo : decrementer la caisse
+            if (!bonPour.get().isEnInstance()){
+                return new ResponseEntity<>("BonPour is already payed !",HttpStatus.OK);
+            }
+            Optional<Caisse> caisse = caisseRepository.findFirstByOrderById();
+            if (caisse.isEmpty()){
+                return new ResponseEntity<>("Caisse not found !",HttpStatus.NOT_FOUND);
+            }
+            // todo : verify sold of caisse cases
+            if (caisse.get().getSolde()<bonPour.get().getMontant()){
+                caisse.get().setSolde(1500);
+            }
+            if (caisse.get().getSolde()<bonPour.get().getMontant()){
+                return new ResponseEntity<>("Insufficient fund amount",HttpStatus.BAD_REQUEST);
+            }
+            caisse.get().setSolde(caisse.get().getSolde()-bonPour.get().getMontant());
             bonPour.get().setEnInstance(false);
+            bonPourRepository.save(bonPour.get());
+            caisseRepository.save(caisse.get());
             return new ResponseEntity<>("BonPour validated successfully !", HttpStatus.OK);
         }
         return new ResponseEntity<>("BonPour not found !", HttpStatus.NOT_FOUND);
