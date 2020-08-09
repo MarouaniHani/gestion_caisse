@@ -14,4 +14,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     public boolean checkIsAdminOrAgentServiceSocial(String role) {
         return role.toLowerCase().equals("admin") || role.toLowerCase().equals("agent_service_social");
     }
+
+    @Override
+    public boolean checkIsAdminOrAgentParcAuto(String role) {
+        return role.toLowerCase().equals("admin") || role.toLowerCase().equals("agent_parc_auto");
+    }
 }
