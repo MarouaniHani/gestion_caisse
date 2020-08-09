@@ -9,6 +9,7 @@ import com.example.pfe.repositories.EmployerRepository;
 import com.example.pfe.repositories.FundRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -30,8 +31,9 @@ public class AssuranceController {
         this.fundRepository = fundRepository;
     }
 
-    @PostMapping
-    ResponseEntity<?> addAssurance(@Valid @RequestBody AssuranceDto assuranceDto) {
+    @PostMapping("/employees/{role}")
+    @PreAuthorize("@employeeServiceImpl.checkIsAdminOrAgentServiceSocial(#userConnectedRole)")
+    ResponseEntity<?> addAssurance(@Valid @RequestBody AssuranceDto assuranceDto, @PathVariable("role") String userConnectedRole) {
         // verifier si l'emploer exist
         Optional<Employer> employer = employerRepository.findByRegistrationNumber(Integer.parseInt(assuranceDto.getEmployerRegistrationNumber()));
         // s'il exist
@@ -55,15 +57,17 @@ public class AssuranceController {
         return new ResponseEntity<>("Employer not found ! please check registration number ", HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping
-    ResponseEntity<?> getAllAssurances() {
+    @GetMapping("/employees/{role}")
+    @PreAuthorize("@employeeServiceImpl.checkIsAdminOrAgentServiceSocial(#userConnectedRole)")
+    ResponseEntity<?> getAllAssurances(@PathVariable("role") String userConnectedRole) {
         // lister tout les assurances de la base de données
         List<Assurance> assurances = assuranceRepository.findAll();
         return new ResponseEntity<>(assurances, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    ResponseEntity<?> getAssuranceById(@PathVariable() int id) {
+    @GetMapping("/{id}/employees/{role}")
+    @PreAuthorize("@employeeServiceImpl.checkIsAdminOrAgentServiceSocial(#userConnectedRole)")
+    ResponseEntity<?> getAssuranceById(@PathVariable() int id, @PathVariable("role") String userConnectedRole) {
         // rechercher l'assurance par id
         Optional<Assurance> assurance = assuranceRepository.findById(id);
         // si l'asssurance exist
@@ -75,8 +79,9 @@ public class AssuranceController {
         return new ResponseEntity<>("Assurance not found !", HttpStatus.OK);
     }
 
-    @GetMapping("/registration-number/{id}")
-    ResponseEntity<?> getAssurancesByRegistrationNumber(@PathVariable() String id) {
+    @GetMapping("/registration-number/{id}/employees/{role}")
+    @PreAuthorize("@employeeServiceImpl.checkIsAdminOrAgentServiceSocial(#userConnectedRole)")
+    ResponseEntity<?> getAssurancesByRegistrationNumber(@PathVariable() String id, @PathVariable("role") String userConnectedRole) {
         // verifier si l'employé exist
         Optional<Employer> employer = employerRepository.findByRegistrationNumber(Integer.parseInt(id));
         // s'il exist
@@ -89,8 +94,9 @@ public class AssuranceController {
         return new ResponseEntity<>("Employer not found !", HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/registration-number/{id}/not-payed")
-    ResponseEntity<?> getAssurancesNotPayedByRegistrationNumber(@PathVariable() String id) {
+    @GetMapping("/registration-number/{id}/not-payed/employees/{role}")
+    @PreAuthorize("@employeeServiceImpl.checkIsAdminOrAgentServiceSocial(#userConnectedRole)")
+    ResponseEntity<?> getAssurancesNotPayedByRegistrationNumber(@PathVariable() String id, @PathVariable("role") String userConnectedRole) {
         // verifier si l'employé exist
         Optional<Employer> employer = employerRepository.findByRegistrationNumber(Integer.parseInt(id));
         // s'il exist
@@ -103,8 +109,9 @@ public class AssuranceController {
         return new ResponseEntity<>("Employer not found !", HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/registration-number/{id}/payed")
-    ResponseEntity<?> getAssurancesPayedByRegistrationNumber(@PathVariable() String id) {
+    @GetMapping("/registration-number/{id}/payed/employees/{role}")
+    @PreAuthorize("@employeeServiceImpl.checkIsAdminOrAgentServiceSocial(#userConnectedRole)")
+    ResponseEntity<?> getAssurancesPayedByRegistrationNumber(@PathVariable() String id, @PathVariable("role") String userConnectedRole) {
         // verifier si l'employé exist
         Optional<Employer> employer = employerRepository.findByRegistrationNumber(Integer.parseInt(id));
         // s'il exist
@@ -117,8 +124,9 @@ public class AssuranceController {
         return new ResponseEntity<>("Employer not found !", HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("/{id}")
-    ResponseEntity<?> deleteAssurance(@PathVariable() int id) {
+    @DeleteMapping("/{id}/employees/{role}")
+    @PreAuthorize("@employeeServiceImpl.checkIsAdminOrAgentServiceSocial(#userConnectedRole)")
+    ResponseEntity<?> deleteAssurance(@PathVariable() int id, @PathVariable("role") String userConnectedRole) {
         // rechercher l'assurance par id
         Optional<Assurance> assurance = assuranceRepository.findById(id);
         // s'il exist
@@ -131,8 +139,9 @@ public class AssuranceController {
         return new ResponseEntity<>("Assurance not found !", HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping("/{id}")
-    ResponseEntity<?> updateAssurance(@PathVariable() int id, @Valid @RequestBody AssuranceDto assuranceDto) {
+    @PutMapping("/{id}/employees/{role}")
+    @PreAuthorize("@employeeServiceImpl.checkIsAdminOrAgentServiceSocial(#userConnectedRole)")
+    ResponseEntity<?> updateAssurance(@PathVariable() int id, @Valid @RequestBody AssuranceDto assuranceDto, @PathVariable("role") String userConnectedRole) {
         // rechercher l'assurance par id
         Optional<Assurance> assurance = assuranceRepository.findById(id);
         // s'il exist
@@ -159,8 +168,9 @@ public class AssuranceController {
         return new ResponseEntity<>("Assurance not found !", HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/pay/{id}")
-    public ResponseEntity<?> payAssurance(@PathVariable() int id) {
+    @PostMapping("/pay/{id}/employees/{role}")
+    @PreAuthorize("@employeeServiceImpl.checkIsAdminOrAgentServiceSocial(#userConnectedRole)")
+    public ResponseEntity<?> payAssurance(@PathVariable() int id, @PathVariable("role") String userConnectedRole) {
         Optional<Assurance> assurance = assuranceRepository.findById(id);
         if (assurance.isPresent()) {
             if (assurance.get().getStatus() == Assurance.Etat.PAYED) {
