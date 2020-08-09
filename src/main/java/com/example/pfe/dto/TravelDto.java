@@ -5,7 +5,6 @@ import javax.validation.constraints.NotNull;
 
 public class TravelDto {
     private String employerRegistrationNumber;
-    @NotNull
     private double amountOfTravel;
 
 

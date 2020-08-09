@@ -50,8 +50,8 @@ public class EmployerController {
             case "admin":
                 role = Employer.Role.ADMIN;
                 break;
-            case "caisier":
-                role = Employer.Role.CAISIER;
+            case "caissier":
+                role = Employer.Role.CAISSIER;
                 break;
             case "agent_parc_auto":
                 role = Employer.Role.AGENT_PARC_AUTO;

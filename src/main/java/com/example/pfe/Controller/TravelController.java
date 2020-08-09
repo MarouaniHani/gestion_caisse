@@ -28,14 +28,29 @@ public class TravelController {
     @PostMapping("/employees/{role}")
     @PreAuthorize("@employeeServiceImpl.checkIsAdminOrAgentParcAuto(#userConnectedRole)")
     public ResponseEntity<?> addTravel(@Valid @RequestBody TravelDto travelDto, @PathVariable("role") String userConnectedRole) {
+
         // verifier si l'employé exist ou nn
         Optional<Employer> employer = employerRepository.findByRegistrationNumber(Integer.parseInt(travelDto.getEmployerRegistrationNumber()));
         // si l'employé exist
         if (employer.isPresent()) {
             // creation d'un nouveau deplacement
             Travel travel = new Travel();
+            double amount;
+            switch (employer.get().getPostion()) {
+                case EXECUTEUR:
+                    amount = 10.0;
+                    break;
+                case MAITRISE:
+                    amount = 15.0;
+                    break;
+                case CADRE:
+                    amount = 20.0;
+                    break;
+                default:
+                    amount = 0.0;
+            }
             travel.setEmployerRegistrationNumber(travelDto.getEmployerRegistrationNumber());
-            travel.setTravelAmount(travelDto.getAmountOfTravel());
+            travel.setTravelAmount(amount);
             // enregister le deplacement dans la base de donnés
             travelRepository.save(travel);
             return new ResponseEntity<>(travel, HttpStatus.OK);

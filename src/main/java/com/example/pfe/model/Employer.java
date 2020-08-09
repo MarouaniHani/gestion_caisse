@@ -92,6 +92,6 @@ public class Employer {
     }
 
     public enum Role {
-        ADMIN, CAISIER, AGENT_SERVICE_SOCIAL, AGENT_PARC_AUTO
+        ADMIN, CAISSIER, AGENT_SERVICE_SOCIAL, AGENT_PARC_AUTO
     }
 }

@@ -6,6 +6,7 @@ import com.example.pfe.model.Article;
 import com.example.pfe.repositories.ArticleRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -22,8 +23,9 @@ public class ArticleController {
         this.articleRepository = articleRepository;
     }
 
-    @PostMapping
-    public ResponseEntity<?> addArticle(@Valid @RequestBody ArticleDto articleDto) {
+    @PostMapping("/employees/{role}")
+    @PreAuthorize("@employeeServiceImpl.checkIsCaissier(#userConnectedRole)")
+    public ResponseEntity<?> addArticle(@Valid @RequestBody ArticleDto articleDto, @PathVariable("role") String userConnectedRole) {
         if (articleDto.getName().equals("")) {
             return new ResponseEntity<>("Please enter article name ", HttpStatus.BAD_REQUEST);
         }
@@ -37,14 +39,16 @@ public class ArticleController {
         return new ResponseEntity<>(article, HttpStatus.OK);
     }
 
-    @GetMapping
-    public ResponseEntity<List<Article>> getAllArticles() {
+    @GetMapping("/employees/{role}")
+    @PreAuthorize("@employeeServiceImpl.checkIsCaissier(#userConnectedRole)")
+    public ResponseEntity<List<Article>> getAllArticles(@PathVariable("role") String userConnectedRole) {
         List<Article> articleList = articleRepository.findAll();
         return new ResponseEntity<>(articleList, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getArticleById(@PathVariable() int id) {
+    @GetMapping("/{id}/employees/{role}")
+    @PreAuthorize("@employeeServiceImpl.checkIsCaissier(#userConnectedRole)")
+    public ResponseEntity<?> getArticleById(@PathVariable() int id, @PathVariable("role") String userConnectedRole) {
         Optional<Article> article = articleRepository.findById(id);
         if (article.isPresent()) {
             return new ResponseEntity<>(article.get(), HttpStatus.OK);
@@ -52,8 +56,9 @@ public class ArticleController {
         return new ResponseEntity<>("Article not found !", HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteArticleById(@PathVariable() int id) {
+    @DeleteMapping("/{id}/employees/{role}")
+    @PreAuthorize("@employeeServiceImpl.checkIsCaissier(#userConnectedRole)")
+    public ResponseEntity<String> deleteArticleById(@PathVariable() int id, @PathVariable("role") String userConnectedRole) {
         Optional<Article> article = articleRepository.findById(id);
         if (article.isPresent()) {
             articleRepository.delete(article.get());
@@ -62,8 +67,9 @@ public class ArticleController {
         return new ResponseEntity<>("Article not found !", HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateArticleById(@PathVariable() int id, @Valid @RequestBody ArticleDto articleDto) {
+    @PutMapping("/{id}/employees/{role}")
+    @PreAuthorize("@employeeServiceImpl.checkIsCaissier(#userConnectedRole)")
+    public ResponseEntity<?> updateArticleById(@PathVariable() int id, @Valid @RequestBody ArticleDto articleDto, @PathVariable("role") String userConnectedRole) {
         Optional<Article> article = articleRepository.findById(id);
         if (article.isPresent()) {
             if (!articleDto.getName().equals("")) {

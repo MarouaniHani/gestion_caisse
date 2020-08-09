@@ -11,6 +11,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public boolean checkIsCaissier(String role) {
+        return role.toLowerCase().equals("caissier");
+    }
+
+    @Override
     public boolean checkIsAdminOrAgentServiceSocial(String role) {
         return role.toLowerCase().equals("admin") || role.toLowerCase().equals("agent_service_social");
     }
