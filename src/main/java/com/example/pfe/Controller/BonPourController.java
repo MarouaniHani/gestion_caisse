@@ -95,6 +95,7 @@ public class BonPourController {
 
     @PutMapping("/validate/{id}")
     public ResponseEntity<?> validateBonPour(@PathVariable() int id) {
+        //todo : verify workflow of payment
         Optional<BonPour> bonPour = bonPourRepository.findById(id);
         if (bonPour.isPresent()) {
             if (!bonPour.get().isEnInstance()) {

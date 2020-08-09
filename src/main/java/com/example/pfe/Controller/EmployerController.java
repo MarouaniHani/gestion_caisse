@@ -6,6 +6,7 @@ import com.example.pfe.model.Employer;
 import com.example.pfe.repositories.EmployerRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -16,14 +17,16 @@ import java.util.Optional;
 @RequestMapping(value = "/api/v1/employers")
 public class EmployerController {
 
+    //todo: get list employees by each filter
     private final EmployerRepository employerRepository;
 
     public EmployerController(EmployerRepository employerRepository) {
         this.employerRepository = employerRepository;
     }
 
-    @PostMapping
-    public ResponseEntity<?> createEmployer(@Valid @RequestBody EmployerDto employerDto) {
+    @PostMapping("/{role}")
+    @PreAuthorize("@employeeServiceImpl.checkIsAdmin(#userConnectedRole)")
+    public ResponseEntity<?> createEmployer(@Valid @RequestBody EmployerDto employerDto, @PathVariable("role") String userConnectedRole) {
         // creation d'un nouveau employé
         Employer employer = new Employer();
         Employer.Postion position;
@@ -41,27 +44,49 @@ public class EmployerController {
             default:
                 return new ResponseEntity<>("Please enter a valid position !", HttpStatus.BAD_REQUEST);
         }
+        // validation du role
+        Employer.Role role;
+        switch (employerDto.getRole().toLowerCase()) {
+            case "admin":
+                role = Employer.Role.ADMIN;
+                break;
+            case "caisier":
+                role = Employer.Role.CAISIER;
+                break;
+            case "agent_parc_auto":
+                role = Employer.Role.AGENT_PARC_AUTO;
+                break;
+            case "agent_service_social":
+                role = Employer.Role.AGENT_SERVICE_SOCIAL;
+                break;
+            default:
+                return new ResponseEntity<>("Please enter a valid role !", HttpStatus.BAD_REQUEST);
+        }
         // persister les données de l'employé
         employer.setFirstName(employerDto.getFirstName());
         employer.setLastName(employerDto.getLastName());
         employer.setPassword(employerDto.getPassword());
         employer.setPostion(position);
+        employer.setRole(role);
         employer.setService(employerDto.getService());
+        //todo : plafond assurance
         employer.setCeilingAssurance(2000);
         // enregistrer les données dans la base de données
         employerRepository.save(employer);
         return new ResponseEntity<>(employer, HttpStatus.OK);
     }
 
-    @GetMapping
-    public ResponseEntity<?> getAllEmployees() {
+    @GetMapping("/{role}")
+    @PreAuthorize("@employeeServiceImpl.checkIsAdmin(#userConnectedRole)")
+    public ResponseEntity<?> getAllEmployees(@PathVariable("role") String userConnectedRole) {
         // Lister tout les employés dans la base de données
         List<Employer> employers = employerRepository.findAll();
         return new ResponseEntity<>(employers, HttpStatus.OK);
     }
 
-    @GetMapping("/registration-number/{id}")
-    public ResponseEntity<?> getEmployerByMatricule(@PathVariable() String id) {
+    @GetMapping("{role}/registration-number/{id}")
+    @PreAuthorize("@employeeServiceImpl.checkIsAdmin(#userConnectedRole)")
+    public ResponseEntity<?> getEmployerByMatricule(@PathVariable() String id, @PathVariable("role") String userConnectedRole) {
         // rechercher l'employé par le matricule
         Optional<Employer> employer = employerRepository.findByRegistrationNumber(Integer.parseInt(id));
         // si l'employé exist
@@ -72,8 +97,9 @@ public class EmployerController {
         return new ResponseEntity<>("Employer not found", HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteEmployer(@PathVariable() String id) {
+    @DeleteMapping("/{id}/{role}")
+    @PreAuthorize("@employeeServiceImpl.checkIsAdmin(#userConnectedRole)")
+    public ResponseEntity<?> deleteEmployer(@PathVariable() String id, @PathVariable("role") String userConnectedRole) {
         // rechercher l'employé par le matricule
         Optional<Employer> employer = employerRepository.findByRegistrationNumber(Integer.parseInt(id));
         // si l'employé exist
@@ -87,8 +113,9 @@ public class EmployerController {
         return new ResponseEntity<>("Employer not found", HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateEmployer(@RequestBody EmployerDto employerDto, @PathVariable() String id) {
+    @PutMapping("/{id}/{role}")
+    @PreAuthorize("@employeeServiceImpl.checkIsAdmin(#userConnectedRole)")
+    public ResponseEntity<?> updateEmployer(@RequestBody EmployerDto employerDto, @PathVariable() String id, @PathVariable("role") String userConnectedRole) {
         // rechercher l'employé par le matricule
         Optional<Employer> employer = employerRepository.findByRegistrationNumber(Integer.parseInt(id));
         // si l'employé exist
@@ -123,7 +150,8 @@ public class EmployerController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto) {
+    @PreAuthorize("@employeeServiceImpl.checkIsAdmin(#userConnectedRole)")
+    public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto, @PathVariable("role") String userConnectedRole) {
         Optional<Employer> employer = employerRepository.findByRegistrationNumberAndPassword(loginDto.getRegistrationNumber(), loginDto.getPassword());
         if (employer.isPresent()) {
             return new ResponseEntity<>(employer.get().getPostion(), HttpStatus.OK);

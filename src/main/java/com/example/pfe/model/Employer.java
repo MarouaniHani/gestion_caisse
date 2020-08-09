@@ -13,6 +13,7 @@ public class Employer {
     private String firstName;
     private String lastName;
     private Postion postion;
+    private Role role;
     private String password;
     private String service;
     //plafond
@@ -54,6 +55,14 @@ public class Employer {
         this.postion = postion;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -78,7 +87,11 @@ public class Employer {
         this.ceilingAssurance = ceilingAssurance;
     }
 
-    public enum Postion{
-        CADRE,MAITRISE,EXECUTEUR
+    public enum Postion {
+        CADRE, MAITRISE, EXECUTEUR
+    }
+
+    public enum Role {
+        ADMIN, CAISIER, AGENT_SERVICE_SOCIAL, AGENT_PARC_AUTO
     }
 }

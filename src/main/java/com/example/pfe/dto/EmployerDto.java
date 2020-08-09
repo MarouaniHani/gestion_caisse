@@ -11,6 +11,7 @@ public class EmployerDto {
     @NotBlank
     private String lastName;
     private String position;
+    private String role;
     @NotNull
     @NotBlank
     private String password;
@@ -18,10 +19,11 @@ public class EmployerDto {
     @NotBlank
     private String service;
 
-    public EmployerDto(String firstName, String lastName, String position, String password, String service) {
+    public EmployerDto(String firstName, String lastName, String position, String role, String password, String service) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.position = position;
+        this.role = role;
         this.password = password;
         this.service = service;
     }
@@ -48,6 +50,14 @@ public class EmployerDto {
 
     public void setPosition(String position) {
         this.position = position;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public String getPassword() {
